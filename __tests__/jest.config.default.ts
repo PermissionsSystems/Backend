@@ -10,7 +10,8 @@ const config: JestConfigWithTsJest = {
   preset: 'ts-jest/presets/default-esm',
   testMatch: ['**/*.test.ts'],
   testEnvironment: 'node',
-  forceExit: true,
+  maxWorkers: 1,
+  forceExit: false,
   clearMocks: true,
   testTimeout: 10000,
   passWithNoTests: true,
@@ -26,7 +27,11 @@ const config: JestConfigWithTsJest = {
         tsconfig: "tsconfig.test.json",
       },
     ],
-  }
+  },
+  collectCoverage: true,
+  coverageDirectory: './coverage/combined',
+  coverageReporters: ['json', 'lcov', 'text'],
+  coverageProvider: 'v8',
 };
 
 export default config;

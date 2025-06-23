@@ -3,6 +3,7 @@ import { EConfigEnvs, EConfigKeys } from './enums.js';
 import { InvalidConfigError } from '../../errors/index.js';
 import type * as types from '../../types/index.js';
 import fs from 'fs';
+import path from 'path';
 
 export default class ConfigLoader {
   private static _config: types.IConfig | undefined;
@@ -24,17 +25,25 @@ export default class ConfigLoader {
     if (ConfigLoader.config) return ConfigLoader.config;
 
     try {
-      let config: Partial<types.IConfig> = {};
+      let config: Partial<types.IConfig> = {
+        diagnostics: {
+          reqTime: false,
+          logRequests: false,
+        },
+      };
 
       switch (process.env.NODE_ENV) {
         case 'development':
-        case 'test':
-          config = JSON.parse(fs.readFileSync('./config/devConfig.json').toString()) as types.IConfig;
+          config = this.readConfig('devConfig.json');
           break;
         case 'production':
-          config = JSON.parse(fs.readFileSync('./config/prodConfig.json').toString()) as types.IConfig;
+          config = this.readConfig('prodConfig.json');
+          break;
+        case 'test':
+          config = this.readConfig('testConfig.json');
           break;
         default:
+          Log.error('Config loader', 'No env provided');
           throw new Error('No config files');
       }
 
@@ -44,7 +53,7 @@ export default class ConfigLoader {
       return config as types.IConfig;
     } catch (err) {
       Log.error('Config loader', 'Got error while reading config files', (err as Error).message);
-      throw new InvalidConfigError();
+      throw new InvalidConfigError((err as Error).message);
     }
   }
 
@@ -56,6 +65,31 @@ export default class ConfigLoader {
   }
 
   /**
+   * Prepare config path.
+   * @param target
+   * @param fallback
+   */
+  private static getPath(target: string, fallback: boolean = false): string {
+    const basePath = import.meta.url.split('/');
+    const dots = ['..', '..', '..', '..', 'config'];
+    if (fallback) dots.unshift('..');
+
+    return path.join(basePath.splice(2, basePath.length - 1).join('/'), ...dots, target);
+  }
+
+  /**
+   * Read config file.
+   * @param target
+   */
+  private static readConfig(target: string): types.IConfig {
+    try {
+      return JSON.parse(fs.readFileSync(ConfigLoader.getPath(target)).toString()) as types.IConfig;
+    } catch (_err) {
+      return JSON.parse(fs.readFileSync(ConfigLoader.getPath(target, true)).toString()) as types.IConfig;
+    }
+  }
+
+  /**
    * Validate if config includes all required keys.
    * @param config {types.IConfigInterface} Config.
    * @returns {void} Void.
@@ -64,8 +98,23 @@ export default class ConfigLoader {
     const configKeys = Object.values(EConfigKeys);
 
     configKeys.forEach((k) => {
-      if (config[k] === undefined || config[k] === null)
-        throw new Error(`Config is incorrect. ${k} is missing in config or is set to undefined`);
+      if (k.includes('.')) {
+        // Spli key for nested values and validate
+        const split = k.split('.');
+        if (
+          split.reduce<Record<string, unknown>>(
+            (acc, key) => acc?.[key as keyof types.IConfig] as Record<string, unknown>,
+            config,
+          ) === undefined ||
+          config[k as keyof types.IConfig] === null
+        ) {
+          throw new Error(`Config is incorrect. ${k} is missing in config or is set to undefined`);
+        }
+      } else {
+        if (config[k as keyof types.IConfig] === undefined || config[k as keyof types.IConfig] === null) {
+          throw new Error(`Config is incorrect. ${k} is missing in config or is set to undefined`);
+        }
+      }
     });
   }
 
@@ -92,6 +141,12 @@ export default class ConfigLoader {
           break;
         case EConfigKeys.TRUST_PROXY:
           config[key] = Boolean(target);
+          break;
+        case EConfigKeys.DIAGNOSTICS_REQ_TIME:
+          config.diagnostics!.reqTime = Boolean(target);
+          break;
+        case EConfigKeys.DIAGNOSTICS_LOG_REQUESTS:
+          config.diagnostics!.logRequests = Boolean(target);
           break;
         default:
           config[key] = target;

@@ -4,4 +4,8 @@ export interface IConfig {
   port: number;
   trustProxy: boolean;
   repository: string;
+  diagnostics: {
+    reqTime: boolean;
+    logRequests: boolean;
+  };
 }
