@@ -17,3 +17,4 @@ export default class Utils {
     State.router.close();
   }
 }
+

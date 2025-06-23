@@ -1,7 +1,8 @@
+import { createHandler } from 'graphql-http/lib/use/express';
 import swaggerJSDoc from 'swagger-jsdoc';
 import swaggerUi from 'swagger-ui-express';
+import graphSchemas from '../graph/index.js';
 import initHealthRoutes from './services/health/index.js';
-import initUserRoutes from './services/user/index.js';
 import { FourOhFour } from '../../errors/index.js';
 import type express from 'express';
 import type swaggerJsdoc from 'swagger-jsdoc';
@@ -18,19 +19,25 @@ export default class AppRouter {
     return this._router;
   }
 
-  initRoutes(): void {
-    initUserRoutes();
+  initRoutes(app: express.Router): void {
+    app.use(
+      '/graphql',
+      createHandler({
+        schema: graphSchemas,
+      }),
+    );
+
     initHealthRoutes();
   }
 
   initFourOhFour(app: express.Express): void {
     app.all(/(.*)/, (_req, res) => {
-      const { status, code, message, name } = new FourOhFour();
+      const { message, name, extensions } = new FourOhFour();
 
-      res.status(status).send({
+      res.status(extensions.status).send({
         error: {
           message,
-          code,
+          code: extensions.code,
           name,
         },
       });
@@ -42,7 +49,7 @@ export default class AppRouter {
     const options: swaggerJsdoc.Options = {
       definition: {
         openapi: '3.0.1',
-        description: 'This is a REST API for node.js template',
+        description: 'This is a REST API for Permissions system server',
         servers: [
           {
             url: 'http://localhost',
@@ -50,7 +57,7 @@ export default class AppRouter {
           },
         ],
         info: {
-          title: 'Node js template',
+          title: 'Permissions system server',
           version: jsonPackage.version as string,
         },
       },

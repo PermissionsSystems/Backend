@@ -4,6 +4,8 @@ export enum EConfigKeys {
   CORS_ORIGIN = 'corsOrigin',
   TRUST_PROXY = 'trustProxy',
   REPOSITORY = 'repository',
+  DIAGNOSTICS_REQ_TIME = 'diagnostics.reqTime',
+  DIAGNOSTICS_LOG_REQUESTS = 'diagnostics.logRequests',
 }
 
 export enum EConfigEnvs {
@@ -12,4 +14,6 @@ export enum EConfigEnvs {
   CORS_ORIGIN = 'CORS_ORIGIN',
   TRUST_PROXY = 'TRUST_PROXY',
   REPOSITORY = 'REPOSITORY',
+  DIAGNOSTICS_REQ_TIME = 'DIAGNOSTICS_REQ_TIME',
+  DIAGNOSTICS_LOG_REQUESTS = 'DIAGNOSTICS_LOG_REQUESTS',
 }

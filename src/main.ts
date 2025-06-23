@@ -16,8 +16,10 @@ class App {
     this._liveness = val;
   }
 
+  @Log.decorateTime('App initialized')
   init(): void {
     try {
+      this.configLogger();
       this.handleInit();
     } catch (err) {
       const { stack, message } = err as IFullError | Error;
@@ -33,7 +35,6 @@ class App {
     State.kill();
   }
 
-  @Log.decorateTime('App initialized')
   private handleInit(): void {
     const controllers = new Bootstrap();
     const router = new Router();
@@ -52,6 +53,10 @@ class App {
     State.alive = true;
 
     this.listenForSignals();
+  }
+
+  private configLogger(): void {
+    Log.setPrefix('permissionsSystem');
   }
 
   private listenForSignals(): void {
