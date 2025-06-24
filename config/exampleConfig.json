@@ -14,5 +14,12 @@
   "diagnostics": {
     "reqTime": false,
     "logRequests": false
+  },
+  "postgres": {
+    "user": "postgresUser",
+    "password": "postgresPassword",
+    "host": "host",
+    "db": "db",
+    "port": 5432
   }
 }

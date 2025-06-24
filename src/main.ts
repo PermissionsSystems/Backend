@@ -1,4 +1,5 @@
 import Log from 'simpl-loggar';
+import Postgres from './connections/postgres/index.js';
 import Router from './connections/router/index.js';
 import Bootstrap from './tools/bootstrap.js';
 import Liveness from './tools/liveness.js';
@@ -44,6 +45,9 @@ class App {
 
     controllers.init();
     router.init();
+
+    const postgres = Postgres.createInstance();
+    State.postgres = postgres;
 
     Log.log('Server', 'Server started');
 
