@@ -165,6 +165,13 @@ Each config includes few elements:
   "diagnostics": {
     "reqTime": false
     "logRequests": false
+  },
+  "postgres": {
+    "user": "postgresUser",
+    "password": "postgresPassword",
+    "host": "host",
+    "db": "db",
+    "port": 5432
   }
 }
 ```
@@ -176,6 +183,8 @@ MyAddress is address, that will be used to host this application.
 CorsOrigin is list of website that will use this application. If you do not care about it, set ["*"]
 
 Session is config for express session. 
+
+Postgres is postgres config
 
 Diagnostics are diagnostic options, which will help you analyze and debug your operations. It supports few options, like:
 

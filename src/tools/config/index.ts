@@ -30,6 +30,13 @@ export default class ConfigLoader {
           reqTime: false,
           logRequests: false,
         },
+        postgres: {
+          user: '',
+          password: '',
+          host: '',
+          db: '',
+          port: 0,
+        },
       };
 
       switch (process.env.NODE_ENV) {
@@ -147,6 +154,21 @@ export default class ConfigLoader {
           break;
         case EConfigKeys.DIAGNOSTICS_LOG_REQUESTS:
           config.diagnostics!.logRequests = Boolean(target);
+          break;
+        case EConfigKeys.POSTGRES_PORT:
+          config.postgres!.port = Number(target);
+          break;
+        case EConfigKeys.POSTGRES_PASSWORD:
+          config.postgres!.password = target;
+          break;
+        case EConfigKeys.POSTGRES_USER:
+          config.postgres!.user = target;
+          break;
+        case EConfigKeys.POSTGRES_DB:
+          config.postgres!.db = target;
+          break;
+        case EConfigKeys.POSTGRES_HOST:
+          config.postgres!.host = target;
           break;
         default:
           config[key] = target;

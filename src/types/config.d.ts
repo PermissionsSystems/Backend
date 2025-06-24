@@ -8,4 +8,11 @@ export interface IConfig {
     reqTime: boolean;
     logRequests: boolean;
   };
+  postgres: {
+    user: string;
+    password: string;
+    host: string;
+    db: string;
+    port: number;
+  };
 }
