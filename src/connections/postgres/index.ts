@@ -9,11 +9,11 @@ export default class Postgres {
 
   protected static accessor instance: Postgres | null = null;
 
-  static createInstance(): Postgres {
+  static async createInstance(): Promise<Postgres> {
     if (Postgres.instance) return Postgres.instance;
 
     Postgres.instance = new Postgres();
-    Postgres.instance.init();
+    await Postgres.instance.init();
     return Postgres.instance;
   }
 
@@ -33,7 +33,7 @@ export default class Postgres {
   }
 
   @Log.decorateLog('Knex', 'Connection open')
-  private init(): void {
+  private async init(): Promise<void> {
     this.knex = knex({
       client: 'pg',
       connection: {
@@ -51,5 +51,12 @@ export default class Postgres {
         max: 20,
       },
     });
+
+    try {
+      await this.knex.raw('SELECT 1');
+    } catch (err) {
+      Log.error('Knex', 'Failed to connect to database');
+      throw new Error((err as Error).message);
+    }
   }
 }

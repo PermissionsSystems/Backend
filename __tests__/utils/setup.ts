@@ -4,6 +4,8 @@ import Connections from './connections.js'
 const connections = new Connections()
 
 beforeAll(async () => {
+  await connections.cleanup()
+
   await connections.connect()
 })
 
