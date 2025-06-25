@@ -19,15 +19,14 @@ class App {
 
   @Log.decorateTime('App initialized')
   init(): void {
-    try {
-      this.configLogger();
-      this.handleInit();
-    } catch (err) {
+    this.configLogger();
+
+    this.handleInit().catch((err) => {
       const { stack, message } = err as IFullError | Error;
       Log.error('Server', 'Err while initializing app', message, stack);
 
       this.close();
-    }
+    });
   }
 
   @Log.decorateLog('Server', 'App closed')
@@ -36,7 +35,7 @@ class App {
     State.kill();
   }
 
-  private handleInit(): void {
+  private async handleInit(): Promise<void> {
     const controllers = new Bootstrap();
     const router = new Router();
 
@@ -46,7 +45,7 @@ class App {
     controllers.init();
     router.init();
 
-    const postgres = Postgres.createInstance();
+    const postgres = await Postgres.createInstance();
     State.postgres = postgres;
 
     Log.log('Server', 'Server started');

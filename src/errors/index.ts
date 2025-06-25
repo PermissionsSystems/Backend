@@ -243,3 +243,67 @@ export class IncorrectDataType extends FullError {
     this.name = 'IncorrectDataType';
   }
 }
+
+/**
+ * @openapi
+ * components:
+ *   schemas:
+ *     IncorrectDataType:
+ *       type: object
+ *       properties:
+ *         name:
+ *           type: string
+ *           description: Error name describing the error cause.
+ *           example: 'UserAlreadyRegistered'
+ *         code:
+ *           type: string
+ *           description: Unique code associated with the error.
+ *           example: '008'
+ *         message:
+ *           type: string
+ *           description: Error message describing the error cause.
+ *           example: 'User already registered'
+ */
+export class UserAlreadyRegistered extends FullError {
+  constructor() {
+    super('User already registered', {
+      extensions: {
+        code: '008',
+        status: 400,
+      },
+    });
+    this.name = 'UserAlreadyRegistered';
+  }
+}
+
+/**
+ * @openapi
+ * components:
+ *   schemas:
+ *     IncorrectDataType:
+ *       type: object
+ *       properties:
+ *         name:
+ *           type: string
+ *           description: Error name describing the error cause.
+ *           example: 'NoUserRegistered'
+ *         code:
+ *           type: string
+ *           description: Unique code associated with the error.
+ *           example: '009'
+ *         message:
+ *           type: string
+ *           description: Error message describing the error cause.
+ *           example: 'No user found'
+ */
+export class NoUserRegistered extends FullError {
+  constructor() {
+    super('No user found', {
+      extensions: {
+        code: '009',
+        status: 404,
+      },
+    });
+    this.name = 'NoUserRegistered';
+  }
+}
