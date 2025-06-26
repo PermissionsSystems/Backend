@@ -46,7 +46,8 @@ class State extends EventEmitter implements IState {
 
   @Log.decorateLog('State', 'App closed')
   kill(): void {
-    this.router.close();
+    this.router?.close();
+    this.postgres?.close();
 
     this.alive = false;
   }
