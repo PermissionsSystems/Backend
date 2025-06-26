@@ -9,11 +9,11 @@ export default class Postgres {
 
   protected static accessor instance: Postgres | null = null;
 
-  static async createInstance(): Promise<Postgres> {
+  static async createInstance(data?: { noValidation?: boolean; init?: boolean }): Promise<Postgres> {
     if (Postgres.instance) return Postgres.instance;
 
     Postgres.instance = new Postgres();
-    await Postgres.instance.init();
+    await Postgres.instance.init(data);
     return Postgres.instance;
   }
 
@@ -33,14 +33,14 @@ export default class Postgres {
   }
 
   @Log.decorateLog('Knex', 'Connection open')
-  private async init(): Promise<void> {
+  private async init(data?: { noValidation?: boolean; init?: boolean }): Promise<void> {
     this.knex = knex({
       client: 'pg',
       connection: {
         host: ConfigLoader.getConfig().postgres.host,
         user: ConfigLoader.getConfig().postgres.user,
         password: ConfigLoader.getConfig().postgres.password,
-        database: ConfigLoader.getConfig().postgres.db,
+        database: data?.init ? 'postgres' : ConfigLoader.getConfig().postgres.db,
         port: ConfigLoader.getConfig().postgres.port,
       },
       migrations: {
@@ -51,6 +51,8 @@ export default class Postgres {
         max: 20,
       },
     });
+
+    if (data?.noValidation) return;
 
     try {
       await this.knex.raw('SELECT 1');

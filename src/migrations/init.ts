@@ -46,7 +46,7 @@ class DbInit {
       .getClient()
       .raw<{ rows: [{ '?column?': 1 }] }>('SELECT 1 FROM pg_database WHERE datname = ?', [dbName]);
 
-    if (databases.rows.length < 0 || databases.rows[0]['?column?'] === 1) return;
+    if (databases.rows.length < 0 || databases.rows[0]?.['?column?'] === 1) return;
 
     await this.client.getClient().raw(`CREATE DATABASE "${dbName}"`);
     Log.log('Init migrations', 'Created new database');
@@ -57,7 +57,7 @@ class DbInit {
   }
 
   private async initClient(): Promise<void> {
-    this.client = await Postgres.createInstance();
+    this.client = await Postgres.createInstance({ noValidation: true, init: true });
   }
 }
 

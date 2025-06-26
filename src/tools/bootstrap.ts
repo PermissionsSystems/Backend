@@ -1,6 +1,8 @@
 import Log from 'simpl-loggar';
 import * as enums from '../enums/index.js';
 import HealthController from '../modules/health/controller.js';
+import KeysController from '../modules/keys/controller.js';
+import UserController from '../modules/users/controller.js';
 import type * as types from '../types/index.js';
 
 /**
@@ -38,6 +40,8 @@ export default class Bootstrap {
     Log.debug('Bootstrap', 'Initializing');
 
     this.register(enums.EControllers.Health, new HealthController());
+    this.register(enums.EControllers.Users, new UserController());
+    this.register(enums.EControllers.Keys, new KeysController());
   }
 
   /**

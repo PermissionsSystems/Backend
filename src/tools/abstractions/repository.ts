@@ -17,11 +17,12 @@ export abstract class RepositoryPostgresFactory<T extends Exclude<EControllers, 
   }
 
   async add(data: types.IRepositoryAddData[T]): Promise<types.IRepositoryGetFull[T]> {
-    await State.postgres.getClient()(this.target).insert<QueryResult>(data);
+    const callback = await State.postgres
+      .getClient()(this.target)
+      .insert<QueryResult>(data)
+      .returning<types.IRepositoryGetFull[T]>('');
 
-    const res = await State.postgres.getClient()<types.IRepositoryGetFull[T]>(this.target).where('login', data.login);
-
-    return res[0] as types.IRepositoryGetFull[T];
+    return callback as types.IRepositoryGetFull[T];
   }
 
   async update(id: string, data: types.IRepositoryUpdateData[T]): Promise<types.IRepositoryGetFull[T]> {
@@ -45,7 +46,7 @@ export abstract class RepositoryPostgresFactory<T extends Exclude<EControllers, 
       .getClient()<types.IRepositoryGetAllData[T]>(this.target)
       .select<types.IRepositoryGetAllData[T]>('*');
 
-    return data;
+    return data as types.IRepositoryGetAllData[T];
   }
 }
 
