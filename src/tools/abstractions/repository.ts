@@ -1,9 +1,8 @@
 import State from '../../tools/state.js';
-import type { EControllers } from '../../enums/index.js';
 import type * as types from '../../types/index.js';
 import type { QueryResult } from 'pg';
 
-export abstract class RepositoryPostgresFactory<T extends Exclude<EControllers, EControllers.Health>>
+export abstract class RepositoryPostgresFactory<T extends types.ERepositoryTargets>
   implements types.IAbstractRepository<T>
 {
   protected readonly _target: string;
@@ -50,7 +49,7 @@ export abstract class RepositoryPostgresFactory<T extends Exclude<EControllers, 
   }
 }
 
-export abstract class RepositoryMemoryFactory<T extends Exclude<EControllers, EControllers.Health>>
+export abstract class RepositoryMemoryFactory<T extends types.ERepositoryTargets>
   implements types.IAbstractRepository<T>
 {
   async add(_data: types.IRepositoryAddData[T]): Promise<types.IRepositoryGetFull[T]> {

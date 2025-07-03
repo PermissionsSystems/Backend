@@ -1,16 +1,10 @@
+import AbstractSubController from '../../../../tools/abstractions/subController.js';
 import type GetUserDto from './dto.js';
-import type { IAbstractSubController } from '../../../../types/index.js';
+import type { EControllers, EUserActions } from '../../../../enums/controllers.js';
 import type { IUserEntity } from '../../entity.js';
-import type { IUserRepository } from '../../repository/types.js';
 
-export default class GetUserController implements IAbstractSubController<IUserEntity[]> {
-  constructor(repo: IUserRepository) {
-    this.repo = repo;
-  }
-
-  private accessor repo: IUserRepository;
-
+export default class GetUserController extends AbstractSubController<EControllers.Users, EUserActions.GetAll> {
   async execute(data: GetUserDto): Promise<IUserEntity[]> {
-    return this.repo.getAll(data.page);
+    return this.repository.getAll(data.page);
   }
 }

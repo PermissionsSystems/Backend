@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta name="robots" content="noindex, nofollow" />
+    <meta content="text/html; charset=utf-8" http-equiv="Content-Type" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <title>Permissions - Login</title>
+
+    <style>
+        * {
+            padding: 0;
+            margin: 0;
+            box-sizing: border-box;
+            font-family: "Inter", "sans-serif";
+        }
+
+        body {
+            overflow-x: hidden;
+        }
+
+        .container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: fit-content;
+            min-height: 100vh;
+            width: 100vw;
+            background: #f3f4f6;
+        }
+
+        p {
+            margin: 5px
+        }
+
+        h2 {
+            color: #374151;
+            font-size: 5.8rem;
+            font-weight: 700;
+            margin-bottom: 40px;
+        }
+
+        h2 span {
+            color: #e11d48;
+            font-weight: 700;
+        }
+
+        .small-header {
+            display: flex;
+            align-items: center;
+            flex-direction: column;
+        }
+
+        .small-header span:first-child {
+            font-weight: 600;
+            color: #64748b;
+            font-size: 1.875rem;
+            /* 30px */
+            line-height: 2.25rem;
+            /* 36px */
+        }
+
+        .small-header span:last-child {
+            color: #94a3b8;
+            margin-top: 8px;
+            font-size: 0.875rem;
+            /* 14px */
+            line-height: 1.25rem;
+            /* 20px */
+        }
+
+
+        form {
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            flex-direction: column;
+
+        }
+
+        form label {
+            display: flex;
+            flex-direction: column;
+            color: #334155;
+            margin-top: 14px;
+            width: 300px;
+            color: #64748b;
+            font-size: 0.875rem;
+            /* 14px */
+            line-height: 1.25rem;
+            /* 20px */
+        }
+
+        form input {
+            margin-top: 8px;
+            margin-bottom: 8px;
+            height: 3em;
+            border: 1px solid #94a3b8;
+            border-radius: 4px;
+            background: #e5e7eb;
+            border: none;
+            padding: 0px 5px;
+            font-weight: 600;
+            color: #475569;
+        }
+
+        form input::placeholder {
+            color: #9ca3af;
+            padding: 0px 4px;
+            font-weight: 500;
+        }
+
+        form .link-container {
+            display: flex;
+            justify-content: center;
+            margin-top: 40px;
+        }
+
+        span a {
+            text-decoration: none;
+            color: #a855f7;
+        }
+
+        form button {
+            background: #7c3aed;
+            color: white;
+            font-weight: 600;
+            padding: 4px 0px;
+            border-radius: 5px;
+            padding: 6px 0px;
+            border: 1px solid grey;
+            cursor: pointer;
+        }
+
+        .error-container {
+            display: flex;
+            display: none;
+            justify-content: center;
+            color: rgb(114, 33, 33);
+            font-weight: 500;
+            font-size: 0.875rem;
+            line-height: 1.25rem;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <div class="left">
+            <div class="small-header">
+                <h2>Authorizations</h2>
+                <div class="left-header__bottom">
+                    <span>Log in to your account</span>
+                </div>
+            </div>
+            <form autocomplete="off" action="/interaction/<%= uid; %>/login" method="post">
+                <label for="login">Login</label>
+                <input id="login" name="login" placeholder="Name" type="text" <% if (!params.login_hint) {
+                    %>autofocus="on"
+                <% } else { %> value=<%= params.login_hint; %>
+                        <% } %>
+                            >
+
+                            <label for="password">Password</label>
+                            <input id="password" name="password" placeholder="Password" type="password" <% if
+                                (params.login_hint) { %>autofocus="on"
+                            <% } %>
+                                >
+
+                                <% if (typeof error !=='undefined' ) { %>
+                                    <div class="error-container">
+                                        <%= error; %>
+                                    </div>
+                                    <% } %>
+                                        <button type="submit">Log in</button>
+            </form>
+        </div>
+    </div>
+    <script>
+        const error = true;
+
+  <% if (typeof error !== 'undefined') { %>
+  const errorContainer = document.querySelector('.error-container');
+            errorContainer.style.display = 'flex';
+  <% } %>
+    </script>
+</body>
+
+</html>

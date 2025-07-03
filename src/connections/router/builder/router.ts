@@ -11,51 +11,54 @@ export default class Routes {
    * Create post endpoint.
    * @param path Path to create.
    */
-  static Post<This, T>(path: string): IRoute<This, T> {
-    return Routes.createRoute<This, T>(ERouteType.POST, path);
+  static Post<This, T, I extends express.Request>(path: string): IRoute<This, T, I> {
+    return Routes.createRoute<This, T, I>(ERouteType.POST, path);
   }
 
   /**
    * Create get endpoint.
    * @param path Path to create.
    */
-  static Get<This, T>(path: string): IRoute<This, T> {
-    return Routes.createRoute<This, T>(ERouteType.GET, path);
+  static Get<This, T, I extends express.Request>(path: string): IRoute<This, T, I> {
+    return Routes.createRoute<This, T, I>(ERouteType.GET, path);
   }
 
   /**
    * Create put endpoint.
    * @param path Path to create.
    */
-  static Put<This, T>(path: string): IRoute<This, T> {
-    return Routes.createRoute<This, T>(ERouteType.PUT, path);
+  static Put<This, T, I extends express.Request>(path: string): IRoute<This, T, I> {
+    return Routes.createRoute<This, T, I>(ERouteType.PUT, path);
   }
 
   /**
    * Create patch endpoint.
    * @param path Path to create.
    */
-  static Patch<This, T>(path: string): IRoute<This, T> {
-    return Routes.createRoute<This, T>(ERouteType.PATCH, path);
+  static Patch<This, T, I extends express.Request>(path: string): IRoute<This, T, I> {
+    return Routes.createRoute<This, T, I>(ERouteType.PATCH, path);
   }
 
   /**
    * Create delete endpoint.
    * @param path Path to create.
    */
-  static Delete<This, T>(path: string): IRoute<This, T> {
-    return Routes.createRoute<This, T>(ERouteType.DELETE, path);
+  static Delete<This, T, I extends express.Request>(path: string): IRoute<This, T, I> {
+    return Routes.createRoute<This, T, I>(ERouteType.DELETE, path);
   }
 
   /**
    * @internal
    */
-  private static createRoute<This, T>(type: ERouteType, path: string): IRoute<This, T>;
+  private static createRoute<This, T, I extends express.Request>(type: ERouteType, path: string): IRoute<This, T, I>;
 
   /**
    * @internal
    */
-  private static createRoute<This, T>(type: ERouteType, path: string): IAsyncRoute<This, T>;
+  private static createRoute<This, T, I extends express.Request>(
+    type: ERouteType,
+    path: string,
+  ): IAsyncRoute<This, T, I>;
 
   /**
    * Create route.
@@ -64,12 +67,12 @@ export default class Routes {
    * @param path Path that endpoint will use.
    * @param service Type of service to call.
    */
-  private static createRoute<This, T>(type: ERouteType, path: string): IRoute<This, T> {
+  private static createRoute<This, T, I extends express.Request>(type: ERouteType, path: string): IRoute<This, T> {
     return function (
-      target: (this: This, req: express.Request, res: express.Response, next?: express.NextFunction) => T,
+      target: (this: This, req: I | express.Request, res: express.Response, next?: express.NextFunction) => T,
       context: ClassMethodDecoratorContext<
         This,
-        (this: This, req: express.Request, res: express.Response, next?: express.NextFunction) => T
+        (this: This, req: I, res: express.Response, next?: express.NextFunction) => T
       >,
     ): undefined | (() => T) {
       const action = (): void => {
@@ -77,7 +80,7 @@ export default class Routes {
 
         State.router.app[type](
           path,
-          async (req: express.Request, res: express.Response, next?: express.NextFunction) => {
+          async (req: I | express.Request, res: express.Response, next?: express.NextFunction) => {
             const instance = new (context.constructor as { new (): This })();
             const output = target.call(instance, req, res, next);
 

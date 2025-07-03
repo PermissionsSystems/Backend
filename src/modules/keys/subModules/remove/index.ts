@@ -1,15 +1,9 @@
+import AbstractSubController from '../../../../tools/abstractions/subController.js';
 import type { IRemoveKeyDto } from './types.js';
-import type { IAbstractSubController } from '../../../../types/index.js';
-import type { IKeyRepository } from '../../repository/types.js';
+import type { EControllers, EKeyActions } from '../../../../enums/controllers.js';
 
-export default class RemoveKeyController implements IAbstractSubController<void> {
-  constructor(repo: IKeyRepository) {
-    this.repo = repo;
-  }
-
-  private accessor repo: IKeyRepository;
-
+export default class RemoveKeyController extends AbstractSubController<EControllers.Keys, EKeyActions.Remove> {
   async execute(data: IRemoveKeyDto): Promise<void> {
-    return this.repo.remove(data);
+    return this.repository.remove(data);
   }
 }

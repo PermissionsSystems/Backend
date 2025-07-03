@@ -1,7 +1,8 @@
-# Node.js Dependency injection template
+# Permissions - backend client 
 
-> [!NOTE]
->This project is a simple node.js template built with typescript. Its extremely simple and includes only the most necessary packages to make your work faster. This template uses ESM. Keep this in mind while working on this project. For some reason, people do not know what esm is.
+## Description:
+
+This application is a simple backend written in node.js. Its main purpose is to allow for authentication and menagment of permissions, which npm package and frontend applications use.
 
 TLDR:
 0. [Key packages](#0-key-packages)
@@ -10,14 +11,14 @@ TLDR:
 3. [Useful information](#3-useful-information)
 4. [Docs](#4-docs)
 5. [Examples](#5-examples)
+6. [Issues](#5-issues)
 
 ## 0. Key packages
 
 - Express - server
 - Helmet - security
 - Swagger - docs
-
-## 1. How to start
+- Postgres - db
 
 ## 1. How to start
 
@@ -42,6 +43,14 @@ npm run start:dev / yarn start:dev
 Above scripts will let you start this application. You can find more detailed guide in `/docs/HowToStart.md`
 
 ## 2. How to build
+
+Build once
+
+```bash
+npm run build / yarn build
+```
+
+Or in watch mode
 
 ```bash
 npm run build / yarn build
@@ -89,6 +98,7 @@ make test
 ### 3.3 Hooks
 
 Instead of adding additional packages like husky, its easier to add hooks manually. If you want your code to check its quality and test itself before committing code, you can add this code to `.git/hooks/pre-commit`
+
 ```bash
 #!/bin/sh
 
@@ -172,24 +182,37 @@ Each config includes few elements:
     "host": "host",
     "db": "db",
     "port": 5432
+  },
+  "session": {
+    "secret": "superSecuredPasswordDontLeakIt",
+    "secured": false,
+    "trustProxy": false
   }
 }
 ```
 
-Port is port, that application will use
+Port is port, that application will use.
 
 MyAddress is address, that will be used to host this application.
 
-CorsOrigin is list of website that will use this application. If you do not care about it, set ["*"]
+CorsOrigin is list of website that will use this application. If you do not care about it, set ["*"].
 
 Session is config for express session. 
 
-Postgres is postgres config
+Postgres is postgres config.
+
+Session is express session, which will be used mostly during user authentication.
+
+Session secret is secret for express session.
+
+Session secured is option for express, to set session cookies with http option.
+
+Session trustProxy will allow express to trust proxy, if your app is behind one, or configured reverse proxy, like nginx. If your app is not public, set it to false.
 
 Diagnostics are diagnostic options, which will help you analyze and debug your operations. It supports few options, like:
 
-- ReqTime - count time for each request. Each time will be logged and will look like this
-- LogRequests - log every request when it comes. Currently there is no filtering done for fields, so you can end up logging user's credentials. Later, filtering options will be added
+- ReqTime - count time for each request. Each time will be logged and will look like this.
+- LogRequests - log every request when it comes. Currently there is no filtering done for fields, so you can end up logging user's credentials. Later, filtering options will be added.
 
 ```json
 [09:50:08] Log.TIME: 67fea6a3-6e4c-4467-98db-07d511b446a5 Time passed: 0.01s
@@ -199,7 +222,7 @@ Diagnostics are diagnostic options, which will help you analyze and debug your o
 }
 ```
 
-Where UUID v4 is random uuid created for each req. This should also have user's id take from login token ( this is a #TODO )
+Where UUID v4 is random uuid created for each req. This should also have user's id take from login token ( this is a #TODO ).
 
 ## 4. Docs
 
@@ -286,3 +309,7 @@ If you are unable to run make command, remove build folder
 - Why are there 2 tsconfig files ?
 
 Dues to issues with jest ( or possibly one of my node modules ), running tests throws errors, that simpl-loggar does not include any d.ts files. This does work perfectly in code, but not in jest. tsconfig.test.json only disabled d.ts validation.
+
+4. This app will be broken, when you deploy it with multiple pods in k8s
+
+Due to how express session is made, Having multiple pods will make express-session break in login system, because express store is locall and not shared. This can be fixed, by creating shared store in some kind of database.

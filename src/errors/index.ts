@@ -307,3 +307,67 @@ export class NoUserRegistered extends FullError {
     this.name = 'NoUserRegistered';
   }
 }
+
+/**
+ * @openapi
+ * components:
+ *   schemas:
+ *     InvalidAuth:
+ *       type: object
+ *       properties:
+ *         name:
+ *           type: string
+ *           description: Error name describing the error cause.
+ *           example: 'InvalidAuth'
+ *         code:
+ *           type: string
+ *           description: Unique code associated with the error.
+ *           example: '010'
+ *         message:
+ *           type: string
+ *           description: Error message describing the error cause.
+ *           example: 'Login or password invalid'
+ */
+export class InvalidAuth extends FullError {
+  constructor() {
+    super('Login or password invalid', {
+      extensions: {
+        code: '010',
+        status: 401,
+      },
+    });
+    this.name = 'InvalidAuth';
+  }
+}
+
+/**
+ * @openapi
+ * components:
+ *   schemas:
+ *     InvalidAuth:
+ *       type: object
+ *       properties:
+ *         name:
+ *           type: string
+ *           description: Error name describing the error cause.
+ *           example: 'InvalidAuthClient'
+ *         code:
+ *           type: string
+ *           description: Unique code associated with the error.
+ *           example: '011'
+ *         message:
+ *           type: string
+ *           description: Error message describing the error cause.
+ *           example: 'Invalid client'
+ */
+export class InvalidAuthClient extends FullError {
+  constructor() {
+    super('Invalid client', {
+      extensions: {
+        code: '011',
+        status: 401,
+      },
+    });
+    this.name = 'InvalidAuthClient';
+  }
+}

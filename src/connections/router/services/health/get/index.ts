@@ -2,6 +2,7 @@ import { EControllers, EHealthActions } from '../../../../../enums/controllers.j
 import handleErr from '../../../../../errors/handler.js';
 import Routes from '../../../builder/router.js';
 import getController from '../../../utils/controllers.js';
+import type { IGetHealthReq } from './types.js';
 import type express from 'express';
 
 export default class HealthRouter {
@@ -19,7 +20,7 @@ export default class HealthRouter {
    *         description: Success. Got information about services
    */
   @Routes.Get('/health')
-  async execute(_req: express.Request, res: express.Response): Promise<void> {
+  async execute(_req: IGetHealthReq, res: express.Response): Promise<void> {
     try {
       const controller = getController(EControllers.Health, EHealthActions.Get);
       const data = await controller.execute();

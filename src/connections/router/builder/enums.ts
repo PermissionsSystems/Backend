@@ -5,4 +5,5 @@ export enum ERouteType {
   DELETE = 'delete',
   PUT = 'put',
   PATCH = 'patch',
+  ALL = 'all',
 }

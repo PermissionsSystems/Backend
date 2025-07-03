@@ -5,6 +5,7 @@ import * as errors from '../../../errors/index.js';
 import ConfigLoader from '../../../tools/config/index.js';
 import State from '../../../tools/state.js';
 import type * as enums from '../../../enums/index.js';
+import type AbstractController from '../../../tools/abstractions/controller.js';
 import type * as types from '../../../types/index.js';
 import type express from 'express';
 import type { RateLimitRequestHandler } from 'express-rate-limit';
@@ -32,15 +33,15 @@ export const limitRate = ():
       });
 };
 
-export const getController = <T extends enums.EControllers, N extends types.IControllerActions>(
+export const getController = <T extends enums.EControllers, N extends keyof types.IInnerController[T]>(
   target: T,
   subTarget: N,
 ): types.IInnerController[T][N] => {
-  const controller = State.controllers.resolve(target);
+  const controller = State.controllers.resolve(target) as AbstractController<T>;
   if (!controller) throw new errors.UnregisteredControllerError(target);
 
-  const subController = controller.resolve(subTarget) as unknown as types.IAbstractSubController<T>; // As unknown will be removed in the future. This is showing an error, because there are no other controllers registered
-  if (!subController) throw new errors.UnregisteredControllerError(subTarget);
+  const subController = controller.resolve(subTarget);
+  if (!subController) throw new errors.UnregisteredControllerError(subTarget as string);
 
-  return subController as unknown as types.IInnerController[T][N]; // As unknown will be removed in the future. This is showing an error, because there are no other controllers registered
+  return subController as types.IInnerController[T][N];
 };
