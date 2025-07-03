@@ -8,6 +8,6 @@ export default class HealthController extends AbstractController<enums.EControll
    * @returns Void.
    */
   protected init(): void {
-    this.register(enums.EHealthActions.Get, new GetHealthController());
+    this.register(enums.EHealthActions.Get, new GetHealthController(undefined));
   }
 }

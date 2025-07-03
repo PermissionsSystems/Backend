@@ -1,3 +1,3 @@
-export interface IAbstractSubController<T> {
-  execute(...params: unknown[]): Promise<T>;
+export interface IAbstractSubController {
+  execute(...params: unknown[]): Promise<unknown>;
 }

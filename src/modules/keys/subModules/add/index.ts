@@ -1,16 +1,10 @@
+import AbstractSubController from '../../../../tools/abstractions/subController.js';
 import type { IAddKeyDto } from './types.js';
-import type { IAbstractSubController } from '../../../../types/index.js';
+import type { EControllers, EKeyActions } from '../../../../enums/controllers.js';
 import type { IKeyEntity } from '../../entity.js';
-import type { IKeyRepository } from '../../repository/types.js';
 
-export default class AddKeyController implements IAbstractSubController<IKeyEntity> {
-  constructor(repo: IKeyRepository) {
-    this.repo = repo;
-  }
-
-  private accessor repo: IKeyRepository;
-
+export default class AddKeyController extends AbstractSubController<EControllers.Keys, EKeyActions.Add> {
   async execute(data: IAddKeyDto): Promise<IKeyEntity> {
-    return this.repo.add(data);
+    return this.repository.add(data);
   }
 }

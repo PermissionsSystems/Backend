@@ -15,4 +15,9 @@ export interface IConfig {
     db: string;
     port: number;
   };
+  session: {
+    secret: string;
+    secured: boolean;
+    trustProxy: boolean;
+  };
 }

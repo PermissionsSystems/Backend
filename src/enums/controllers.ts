@@ -11,12 +11,26 @@ export enum EKeyActions {
   Remove = 'removeKey',
 }
 
+export enum EClientActions {
+  Get = 'getKeys',
+  Add = 'addKey',
+  Remove = 'removeKey',
+}
+
 export enum EHealthActions {
   Get = 'getHealth',
+}
+
+export enum EAuthActions {
+  GetLogin = 'getLogin',
+  PostLogin = 'postLogin',
+  CancelLogin = 'cancelLogin',
 }
 
 export enum EControllers {
   Users = 'users',
   Keys = 'keys',
   Health = 'health',
+  Auth = 'auth',
+  Clients = 'clients',
 }

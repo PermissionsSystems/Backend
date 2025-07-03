@@ -1,8 +1,9 @@
+import AbstractSubController from '../../../../tools/abstractions/subController.js';
 import State from '../../../../tools/state.js';
 import type { IGetHealth } from './types.js';
-import type { IAbstractSubController } from '../../../../types/abstractions.js';
+import type { EControllers, EHealthActions } from '../../../../enums/controllers.js';
 
-export default class GetHealthController implements IAbstractSubController<IGetHealth> {
+export default class GetHealthController extends AbstractSubController<EControllers.Health, EHealthActions.Get> {
   async execute(): Promise<IGetHealth> {
     return new Promise((resolve) => {
       resolve({ alive: State.alive });

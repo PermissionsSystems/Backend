@@ -1,10 +1,12 @@
 import { exportJWK, generateKeyPair } from 'jose';
 import Log from 'simpl-loggar';
+import Postgres from '../../connections/postgres/index.js';
 import getController from '../../connections/router/utils/controllers.js';
 import { EControllers, EKeyActions } from '../../enums/controllers.js';
 import GetAllKeysDto from '../../modules/keys/subModules/getAll/dto.js';
 import RemoveKeyDto from '../../modules/keys/subModules/remove/dto.js';
 import State from '../../tools/state.js';
+import Bootstrap from '../bootstrap.js';
 import type { JWK } from 'jose';
 
 class RotateKeys {
@@ -38,6 +40,8 @@ class RotateKeys {
   }
 
   private async rotateKeys(): Promise<void> {
+    await this.initCommunication();
+
     const controller = getController(EControllers.Keys, EKeyActions.GetAll);
     const removeController = getController(EControllers.Keys, EKeyActions.Remove);
 
@@ -58,6 +62,16 @@ class RotateKeys {
     } else {
       await this.createKeys(3 - keys.length);
     }
+  }
+
+  private async initCommunication(): Promise<void> {
+    const controllers = new Bootstrap();
+    const postgres = await Postgres.createInstance();
+
+    State.controllers = controllers;
+    State.postgres = postgres;
+
+    State.controllers.init();
   }
 
   private configLogger(): void {

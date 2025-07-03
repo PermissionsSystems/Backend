@@ -1,6 +1,7 @@
 import cookieParser from 'cookie-parser';
 import cors from 'cors';
 import express from 'express';
+import session from 'express-session';
 import helmet from 'helmet';
 import Log from 'simpl-loggar';
 import { limitRate } from './utils/index.js';
@@ -31,7 +32,11 @@ export default class Middleware {
     this.initGenericMiddleware(app);
     this.initSecurity(app);
 
-    const diag = ConfigLoader.getConfig().diagnostics;
+    const config = ConfigLoader.getConfig();
+    const diag = config.diagnostics;
+
+    this.startSession(app);
+    if (config.session.trustProxy) app.set('trust proxy', 1);
 
     if (diag.logRequests) this.logRequests(app);
     if (diag.reqTime) this.measureTime(app);
@@ -54,6 +59,29 @@ export default class Middleware {
 
       next();
     });
+  }
+
+  /**
+   * Start express session.
+   * @param app
+   */
+  private startSession(app: express.Express): void {
+    const config = ConfigLoader.getConfig();
+
+    app.use(
+      session({
+        secret: config.session.secret,
+        resave: false,
+        rolling: true,
+        saveUninitialized: true,
+        cookie: {
+          secure: config.session.secured,
+          httpOnly: true,
+          maxAge: 60 * 15 * 1000,
+        },
+        name: 'auth.sess',
+      }),
+    );
   }
 
   /**
@@ -138,6 +166,8 @@ export default class Middleware {
       res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept');
       next();
     });
+
+    app.set('view engine', 'ejs');
   }
 
   generateErrHandler(app: express.Express): void {

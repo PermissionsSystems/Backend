@@ -40,19 +40,30 @@ Each config includes few elements:
     "host": "host",
     "db": "db",
     "port": 5432
+  },
+  "session": {
+    "secret": "superSecuredPasswordDontLeakIt",
+    "secured": false,
+    "trustProxy": false
   }
 }
 ```
 
-Port is port, that application will use
+Port is port, that application will use.
 
 MyAddress is address, that will be used to host this application.
 
-CorsOrigin is list of website that will use this application. If you do not care about it, set ["*"]
+CorsOrigin is list of website that will use this application. If you do not care about it, set ["*"].
 
 Session is config for express session. 
 
-Postgres is postgres config
+Postgres is postgres config.
+
+Session is express session, which will be used mostly during user authentication.
+
+Session secret is secret for express session.
+
+Session secured is option for express, to set session cookies with http option.
 
 Diagnostics are diagnostic options, which will help you analyze and debug your operations. It supports few options, like:
 

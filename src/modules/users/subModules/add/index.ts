@@ -1,25 +1,19 @@
 import * as errors from '../../../../errors/index.js';
+import AbstractSubController from '../../../../tools/abstractions/subController.js';
 import type AddUserDto from './dto.js';
-import type { IAbstractSubController } from '../../../../types/index.js';
+import type { EControllers, EUserActions } from '../../../../enums/controllers.js';
 import type { IUserEntity } from '../../entity.js';
-import type { IUserRepository } from '../../repository/types.js';
 
-export default class AddUserController implements IAbstractSubController<IUserEntity> {
-  constructor(repo: IUserRepository) {
-    this.repo = repo;
-  }
-
-  private accessor repo: IUserRepository;
-
+export default class AddUserController extends AbstractSubController<EControllers.Users, EUserActions.Add> {
   async execute(data: AddUserDto): Promise<IUserEntity> {
-    const existByLogin = await this.repo.getByLogin(data.login);
-    const existByEmail = await this.repo.getByEmail(data.email);
+    const existByLogin = await this.repository.getByLogin(data.login);
+    const existByEmail = await this.repository.getByEmail(data.email);
 
     // This is really stupid, but ci/cd for some reason cannot remove data from db. Fix it later...
     if ((existByLogin?.id?.toString()?.length ?? 0) > 0 || (existByEmail?.id?.toString()?.length ?? 0) > 0) {
       throw new errors.UserAlreadyRegistered();
     }
 
-    return this.repo.add(data);
+    return this.repository.add(data);
   }
 }
