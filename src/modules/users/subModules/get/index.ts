@@ -9,7 +9,6 @@ export default class GetUserController extends AbstractSubController<EController
 
     if (data.id) user = await this.repository.get(data.id);
     if (data.login) user = await this.repository.getByLogin(data.login);
-    if (data.email) user = await this.repository.getByEmail(data.email);
 
     return user;
   }

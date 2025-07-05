@@ -40,10 +40,11 @@ class App {
     const router = new Router();
 
     State.controllers = controllers;
-    State.router = router;
 
     controllers.init();
     router.init();
+
+    State.router = router;
 
     const postgres = await Postgres.createInstance();
     State.postgres = postgres;

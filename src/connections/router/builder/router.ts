@@ -109,6 +109,7 @@ export default class Routes {
       Routes.queue.forEach((e) => {
         e();
       });
+      State.router.postInit();
     });
   }
 }

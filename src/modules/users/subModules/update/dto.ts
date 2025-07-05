@@ -3,11 +3,9 @@ import type { IUpdateUserDto } from './types.js';
 
 export default class UpdateUserDto implements IUpdateUserDto {
   login?: string;
-  email?: string;
 
   constructor(data: IUpdateUserDto) {
     this.login = data.login;
-    this.email = data.email;
 
     this.validate();
   }
@@ -16,11 +14,6 @@ export default class UpdateUserDto implements IUpdateUserDto {
     if (this.login) {
       UserSchema.parse({
         login: this.login,
-      });
-    }
-    if (this.email) {
-      UserSchema.parse({
-        email: this.email,
       });
     }
   }

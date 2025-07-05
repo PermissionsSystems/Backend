@@ -1,5 +1,6 @@
 import { GraphQLError } from 'graphql';
 import Log from 'simpl-loggar';
+import { ZodError } from 'zod';
 import { InternalError } from '../../../errors/index.js';
 import type { IFullError, IFullRawError } from '../../../types/errors.js';
 
@@ -7,6 +8,21 @@ import type { IFullError, IFullRawError } from '../../../types/errors.js';
 export const filterError = (error: IFullError | IFullRawError): void => {
   if ((error as IFullError)?.extensions?.code) {
     throw error;
+  }
+
+  if (error instanceof ZodError) {
+    const validationErrors = error.errors.map((e) => ({
+      message: e.message,
+      path: e.path.join('.'),
+      code: e.code,
+    }));
+
+    throw new GraphQLError('Validation Error', {
+      extensions: {
+        code: '400',
+        validationErrors,
+      },
+    });
   }
 
   if ((error as IFullRawError)?.code) {

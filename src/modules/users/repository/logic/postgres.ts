@@ -13,10 +13,4 @@ export default class UserPostgresRepository
 
     return data.length > 0 ? data[0]! : null;
   }
-
-  async getByEmail(email: string): Promise<IUserEntity | null> {
-    const data = await State.postgres.getClient()<IUserEntity>(this.target).where('email', email);
-
-    return data.length > 0 ? data[0]! : null;
-  }
 }

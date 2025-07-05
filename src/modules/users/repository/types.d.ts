@@ -7,5 +7,4 @@ export interface IUserRepository {
   get(id: string): Promise<IUserEntity | null>;
   update(id: string, data: Partial<IUserEntity>): Promise<IUserEntity>;
   getByLogin(login: string): Promise<IUserEntity | null>;
-  getByEmail(email: string): Promise<IUserEntity | null>;
 }

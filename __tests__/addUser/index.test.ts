@@ -41,7 +41,6 @@ describe('Add user', () => {
         "variables": {
           "user": {
             "login": null,
-            "email": "email@email.email"
           }
         }
       }
@@ -55,33 +54,12 @@ describe('Add user', () => {
       expect(body.errors[0].message).toEqual(`Variable "$user" got invalid value null at "user.login"; Expected non-nullable type "String!" not to be null.`)
     });
 
-    it(`Add user - missing email - graph error`, async () => {
-      const reqBody = {
-        "query": "mutation($user: AddUserInput!) { addUser(user: $user) { id login } }",
-        "variables": {
-          "user": {
-            "login": 'login',
-            "email": null
-          }
-        }
-      }
-
-      const res = (await supertest(app!)
-        .post('/graphql')
-        .send(reqBody))
-
-      const body = res.body as IGraphError
-
-      expect(body.errors[0].message).toEqual(`Variable "$user" got invalid value null at "user.email"; Expected non-nullable type "String!" not to be null.`)
-    })
-
     it(`Add user - login too long - js error`, async () => {
       const reqBody = {
         "query": "mutation($user: AddUserInput!) { addUser(user: $user) { id login } }",
         "variables": {
           "user": {
             "login": generateRandomName(51),
-            "email": "email@email.email"
           }
         }
       }
@@ -101,7 +79,6 @@ describe('Add user', () => {
         "variables": {
           "user": {
             "login": '1',
-            "email": "email@email.email"
           }
         }
       }
@@ -115,35 +92,14 @@ describe('Add user', () => {
       expect(body.errors[0].message).toEqual(`login should be more than 3 and less than 50 characters`)
     });
 
-    it(`Add user - email invalid - js error`, async () => {
-      const reqBody = {
-        "query": "mutation($user: AddUserInput!) { addUser(user: $user) { id login } }",
-        "variables": {
-          "user": {
-            "login": 'login',
-            "email": "email"
-          }
-        }
-      }
-
-      const res = (await supertest(app!)
-        .post('/graphql')
-        .send(reqBody))
-
-      const body = res.body as IGraphError
-
-      expect(body.errors[0].message).toEqual(`Email invalid`)
-    });
-
     it(`Add user - user by this login already exists`, async () => {
-      await tester!.createFakeUser({ login: 'userName', id: 1, email: "email@email.email2" })
+      await tester!.createFakeUser({ login: 'userName', id: 1 })
 
       const reqBody = {
         "query": "mutation($user: AddUserInput!) { addUser(user: $user) { id login } }",
         "variables": {
           "user": {
             "login": "userName",
-            "email": "email@email.email"
           }
         }
       }
@@ -159,42 +115,16 @@ describe('Add user', () => {
       expect(body.errors[0]!.extensions.code).toEqual(errorTarget.extensions.code)
       expect(body.errors[0]!.extensions.status).toEqual(errorTarget.extensions.status)
     })
-
-    it(`Add user - user by this email already exists`, async () => {
-      await tester!.createFakeUser({ login: 'userName', id: 1, email: "email@email.email" })
-
-      const reqBody = {
-        "query": "mutation($user: AddUserInput!) { addUser(user: $user) { id login } }",
-        "variables": {
-          "user": {
-            "login": "userName",
-            "email": "email@email.email"
-          }
-        }
-      }
-
-      const res = (await supertest(app!)
-        .post('/graphql')
-        .send(reqBody))
-
-      const body = res.body as IGraphError
-      const { extensions, message } = new UserAlreadyRegistered()
-
-      expect(body.errors[0]!.message).toEqual(message)
-      expect(body.errors[0]!.extensions.code).toEqual(extensions.code)
-      expect(body.errors[0]!.extensions.status).toEqual(extensions.status)
-    })
   })
 
   describe('Should pass', () => {
     it(`Add user`, async () => {
       await tester!.cleanUp()
       const reqBody = {
-        "query": "mutation($user: AddUserInput!) { addUser(user: $user) { id login, email } }",
+        "query": "mutation($user: AddUserInput!) { addUser(user: $user) { id login } }",
         "variables": {
           "user": {
             "login": "userName2",
-            "email": "email@email.email2"
           }
         }
       }
@@ -207,7 +137,6 @@ describe('Add user', () => {
 
       expect(body.data.addUser?.id).not.toBeNull()
       expect(body.data.addUser?.login).toEqual("userName2")
-      expect(body.data.addUser?.email).toEqual("email@email.email2")
     });
   })
 });

@@ -33,6 +33,20 @@ describe('Get user', () => {
     await tester!.cleanUp()
   })
 
+  describe('Should fail', () => {
+    it(`Get user by login - login is empty string`, async () => {
+      const reqBody = { query: "{ user ( login: \" \" ) { id login } }"}
+
+      const res = (await supertest(app!)
+        .post('/graphql')
+        .send(reqBody))
+
+      const body = res.body as IGraphError
+
+      expect(body.errors.length).toEqual(1)
+    });
+  })
+
   describe('Should pass', () => {
     it(`Get user by login - no users`, async () => {
       const reqBody = { query: "{ user ( login: \"userName\" ) { id login } }"}
@@ -46,21 +60,9 @@ describe('Get user', () => {
       expect(body.data.user).toBeNull()
     });
 
-    it(`Get user by email - no users`, async () => {
-      const reqBody = { query: "{ user ( email: \"email@email.email\" ) { id, login, email } }"}
-
-      const res = (await supertest(app!)
-        .post('/graphql')
-        .send(reqBody))
-
-      const body = res.body as IGetUsersResponse
-
-      expect(body.data.user).toBeNull()
-    });
-
     it(`Get full user by login`, async () => {
-      await tester!.createFakeUser({ login: 'userName', id: 1, email: 'email@email.email' })
-      const reqBody = { query: "{ user ( login: \"userName\" ) { id login, email } }"}
+      await tester!.createFakeUser({ login: 'userName', id: 1 })
+      const reqBody = { query: "{ user ( login: \"userName\" ) { id login } }"}
 
       const res = (await supertest(app!)
         .post('/graphql')
@@ -70,11 +72,10 @@ describe('Get user', () => {
 
       expect(body.data.user!.login).toEqual('userName')
       expect(body.data.user!.id).toEqual("1")
-      expect(body.data.user!.email).toEqual('email@email.email')
     });
 
     it(`Get user's id by login`, async () => {
-      await tester!.createFakeUser({ login: 'userName', id: 1, email: 'email@email.email' })
+      await tester!.createFakeUser({ login: 'userName', id: 1 })
       const reqBody = { query: "{ user ( login: \"userName\" ) { id } }"}
 
       const res = (await supertest(app!)
@@ -88,7 +89,7 @@ describe('Get user', () => {
     });
 
     it(`Get user's login by login`, async () => {
-      await tester!.createFakeUser({ login: 'userName', id: 1, email: 'email@email.email' })
+      await tester!.createFakeUser({ login: 'userName', id: 1 })
       const reqBody = { query: "{ user ( login: \"userName\" ) { login } }"}
 
       const res = (await supertest(app!)
@@ -102,7 +103,7 @@ describe('Get user', () => {
     });
 
     it(`Get user's id by id`, async () => {
-      await tester!.createFakeUser({ login: 'userName', id: 1, email: 'email@email.email' })
+      await tester!.createFakeUser({ login: 'userName', id: 1 })
       const reqBody = { query: "{ user ( id: \"1\" ) { id } }"}
 
       const res = (await supertest(app!)
@@ -115,21 +116,8 @@ describe('Get user', () => {
       expect(body.data.user!.id).toEqual("1")
     });
 
-    it(`Try to get user's password using email`, async () => {
-      await tester!.createFakeUser({ login: 'userName', id: 1, email: "email@email.email", password: 'test' })
-      const reqBody = { query: "{ user ( email: \"email@email.email\" ) { password } }"}
-
-      const res = (await supertest(app!)
-        .post('/graphql')
-        .send(reqBody))
-
-      const body = res.body as IGraphError
-
-      expect(body.errors[0]!.message).toEqual('Cannot query field "password" on type "User".')
-    });
-
     it(`Get user's login by id`, async () => {
-      await tester!.createFakeUser({ login: 'userName', id: 1, email: 'email@email.email' })
+      await tester!.createFakeUser({ login: 'userName', id: 1 })
       const reqBody = { query: "{ user ( id: \"1\" ) { login } }"}
 
       const res = (await supertest(app!)
@@ -140,21 +128,6 @@ describe('Get user', () => {
 
       expect(body.data.user!.id).toBeUndefined()
       expect(body.data.user!.login).toEqual("userName")
-    });
-
-    it(`Get user's login by email`, async () => {
-      await tester!.createFakeUser({ login: 'userName', id: 1, email: "email@email.email" })
-      const reqBody = { query: "{ user ( email: \"email@email.email\" ) { login } }"}
-
-      const res = (await supertest(app!)
-        .post('/graphql')
-        .send(reqBody))
-
-      const body = res.body as IGetUsersResponse
-
-      expect(body.data.user!.id).toBeUndefined()
-      expect(body.data.user!.email).toBeUndefined()
-      expect(body.data.user!.login).toEqual('userName')
     });
   })
 });

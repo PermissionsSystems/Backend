@@ -5,17 +5,21 @@ import Router from '../../src/connections/router/index.js';
 import Postgres from '../../src/connections/postgres/index.js'
 import Bootstrap from '../../src/tools/bootstrap.js';
 import Log from 'simpl-loggar';
+import { ETableNames } from '../../src/enums/db.js';
 
 export default class Utils {
   constructor() {
     State.controllers = new Bootstrap()
-    State.router = new Router();
   }
 
   async connect(): Promise<void> {
+const router = new Router()
+
     State.postgres = await Postgres.createInstance()
     State.controllers.init()
-    State.router.init()
+    router.init()
+
+    State.router = router;
   }
 
   async close(): Promise<void> {
@@ -48,6 +52,8 @@ export default class Utils {
 
       const client = knex({...MigrationsPostgresConfig, migrations: {...MigrationsPostgresConfig.migrations, directory: "./src/migrations/actions"}})
       await client.migrate.latest()
+
+      await client(ETableNames.Users).truncate()
 
       client.destroy()
       adminClient.destroy()

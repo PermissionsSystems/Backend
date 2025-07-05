@@ -39,6 +39,12 @@ export default class Router {
     this.initRateLimiter();
     this.initRouter();
     this.initServer();
+  }
+
+  /*
+   * Initialize error handler and 404
+   */
+  postInit(): void {
     this.initFourOhFour();
     this.initErrHandler();
   }

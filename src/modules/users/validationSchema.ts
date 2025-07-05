@@ -9,9 +9,5 @@ export default z.object({
       'Id must be uuid v4',
     ),
   login: z.string().min(1),
-  email: z
-    .string()
-    .min(3)
-    .regex(new RegExp(/^[a-zA-Z0-9.!#$%&’*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/u, 'u'), 'Email invalid'),
   password: z.string().min(5, 'Password must be at least 5 characters long'),
 });

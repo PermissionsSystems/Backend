@@ -66,6 +66,7 @@ export default class Middleware {
    * @param app
    */
   private startSession(app: express.Express): void {
+    Log.debug('Middleware', 'Starting user session');
     const config = ConfigLoader.getConfig();
 
     app.use(
@@ -79,7 +80,7 @@ export default class Middleware {
           httpOnly: true,
           maxAge: 60 * 15 * 1000,
         },
-        name: 'auth.sess',
+        name: 'permissions.sess',
       }),
     );
   }
@@ -103,7 +104,7 @@ export default class Middleware {
           typeof req.body === 'object' &&
           Object.keys(req.body as Record<string, string>).length > 0
         ) {
-          logBody.body = req.body as Record<string, string>;
+          logBody.body = { ...req.body } as Record<string, string>;
 
           // Hide password in logs
           if (logBody.body.password) {
@@ -167,6 +168,8 @@ export default class Middleware {
       next();
     });
 
+    app.use('/public', express.static('public/static'));
+    app.set('views', 'public');
     app.set('view engine', 'ejs');
   }
 
