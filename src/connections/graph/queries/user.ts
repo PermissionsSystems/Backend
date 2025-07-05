@@ -33,7 +33,6 @@ export const user = {
   args: {
     id: { type: GraphQLID },
     login: { type: GraphQLString },
-    email: { type: GraphQLString },
   },
   resolve: async (_: unknown, args: IGetUserDto): Promise<IUserEntity | null> => {
     try {

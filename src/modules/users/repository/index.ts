@@ -19,10 +19,6 @@ class UserRepository implements IUserRepository {
     return this.repository.getByLogin(login);
   }
 
-  async getByEmail(email: string): Promise<IUserEntity | null> {
-    return this.repository.getByEmail(email);
-  }
-
   async get(id: string): Promise<IUserEntity | null> {
     return this.repository.get(id);
   }

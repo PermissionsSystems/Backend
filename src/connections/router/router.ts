@@ -2,6 +2,7 @@ import { createHandler } from 'graphql-http/lib/use/express';
 import swaggerJSDoc from 'swagger-jsdoc';
 import swaggerUi from 'swagger-ui-express';
 import graphSchemas from '../graph/index.js';
+import initAuthRoutes from './services/auth/index.js';
 import initHealthRoutes from './services/health/index.js';
 import { FourOhFour } from '../../errors/index.js';
 import type express from 'express';
@@ -28,6 +29,7 @@ export default class AppRouter {
     );
 
     initHealthRoutes();
+    initAuthRoutes();
   }
 
   initFourOhFour(app: express.Express): void {

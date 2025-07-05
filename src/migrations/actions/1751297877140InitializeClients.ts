@@ -9,9 +9,11 @@ export const up = async (knex: knex.Knex): Promise<void> => {
     table.string('failRedirectUrl');
   });
 
-  knex.schema.raw(
-    `INSERT INTO \`${ETableNames.Clients}\` VALUES (NULL, 'test', 'http://localhost:5002/login/success', 'http://localhost:5002/login/fail');`,
-  );
+  await knex(ETableNames.Clients).insert({
+    name: 'test',
+    redirectUrl: 'http://localhost:5002/login/success',
+    failRedirectUrl: 'http://localhost:5002/login/fail',
+  });
 };
 
 export const down = async (knex: knex.Knex): Promise<void> => {

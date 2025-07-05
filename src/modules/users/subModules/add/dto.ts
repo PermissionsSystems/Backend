@@ -1,13 +1,13 @@
-import ValidationSchema from '../../validationSchema.js';
+import ValidationSchema from './validationSchema.js';
 import type { IAddUserDto } from './types.js';
 
 export default class AddUserDto implements IAddUserDto {
   login: string;
-  email: string;
+  password?: string;
 
   constructor(data: IAddUserDto) {
     this.login = data.login;
-    this.email = data.email;
+    this.password = data.password;
 
     this.validate();
   }

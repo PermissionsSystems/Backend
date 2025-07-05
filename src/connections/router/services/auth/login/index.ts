@@ -30,7 +30,8 @@ export default class LoginRouter {
 
       (req.session as IUserSession).client = data;
 
-      res.render('login');
+      res.type('html');
+      res.render('login', { params: {} });
     } catch (err) {
       handleErr(err as Error, res);
     }

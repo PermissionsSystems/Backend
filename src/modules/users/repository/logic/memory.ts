@@ -9,13 +9,7 @@ export default class UserMemoryRepository
 {
   async getByLogin(_data: string): Promise<IUserEntity | null> {
     return new Promise((resolve) => {
-      resolve({ login: '', id: 0, password: 'password', email: 'email@email.email' });
-    });
-  }
-
-  async getByEmail(_data: string): Promise<IUserEntity | null> {
-    return new Promise((resolve) => {
-      resolve({ login: '', id: 0, password: 'password', email: 'email@email.email' });
+      resolve({ login: '', id: 0, password: 'password' });
     });
   }
 }

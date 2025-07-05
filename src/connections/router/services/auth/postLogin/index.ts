@@ -1,5 +1,7 @@
+import Log from 'simpl-loggar';
 import { EControllers, EAuthActions } from '../../../../../enums/controllers.js';
 import { ETokens } from '../../../../../enums/tokens.js';
+import { InvalidAuth } from '../../../../../errors/index.js';
 import LoginDto from '../../../../../modules/auth/subModules/postLogin/dto.js';
 import Routes from '../../../builder/router.js';
 import { getController } from '../../../utils/index.js';
@@ -35,7 +37,10 @@ export default class LoginRouter {
 
       res.redirect(data.redirect);
     } catch (err) {
-      res.render('login', { error: (err as Error).message });
+      Log.debug('Post login', 'Got error while logging in', err);
+
+      res.type('html');
+      res.render('login', { error: new InvalidAuth().message, params: { login_hint: req.body?.login ?? '' } });
     }
   }
 }

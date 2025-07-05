@@ -1,4 +1,5 @@
 import Log from 'simpl-loggar';
+import { ZodError } from 'zod';
 import { InternalError } from './index.js';
 import type { IFullError } from '../types/errors.js';
 import type express from 'express';
@@ -8,7 +9,10 @@ const handleErr = (err: IFullError | Error, res: express.Response): void => {
 
   let error = err as IFullError;
 
-  if (!(err as IFullError)?.extensions?.code) {
+  if (error instanceof ZodError) {
+    res.status(400).send(error);
+    return;
+  } else if (!(err as IFullError)?.extensions?.code) {
     error = new InternalError();
   }
 

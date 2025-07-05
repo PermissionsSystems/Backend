@@ -7,6 +7,7 @@ const QueryType = new GraphQLObjectType({
   fields: {
     ...queries.role,
     ...queries.permission,
+    ...queries.user,
   },
 });
 
