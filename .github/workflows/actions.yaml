@@ -60,6 +60,11 @@ jobs:
             "diagnostics": {
               "reqTime": false,
               "logRequests": false
+            },
+            "session": {
+              "secret": "superSecuredPasswordDontLeakIt",
+              "secured": false,
+              "trustProxy": false
             }
           }' > config/devConfig.json
           cp config/devConfig.json config/prodConfig.json

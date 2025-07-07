@@ -44,7 +44,7 @@ export default class ClientFacade {
     switch (repositoryTarget) {
       case 'memory':
         Log.debug('Controller', 'Creating in-memory database');
-        ClientFacade.instance = new ClientRepository(new MemoryClientRepository());
+        ClientFacade.instance = new ClientRepository(MemoryClientRepository.createInstance());
         return ClientFacade.instance;
       case 'postgres':
         Log.debug('Controller', 'Creating postgres database for clients');

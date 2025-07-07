@@ -52,27 +52,32 @@ export abstract class RepositoryPostgresFactory<T extends types.ERepositoryTarge
 export abstract class RepositoryMemoryFactory<T extends types.ERepositoryTargets>
   implements types.IAbstractRepository<T>
 {
-  async add(_data: types.IRepositoryAddData[T]): Promise<types.IRepositoryGetFull[T]> {
+  private accessor data: types.IRepositoryGetFull[T][] = [];
+
+  async add(data: types.IRepositoryAddData[T]): Promise<types.IRepositoryGetFull[T]> {
     return new Promise((resolve) => {
-      resolve({} as unknown as types.IRepositoryGetFull[T]);
+      this.data.push(data as types.IRepositoryGetFull[T]);
+      resolve(data as types.IRepositoryGetFull[T]);
     });
   }
 
-  async update(_id: string, _data: types.IRepositoryUpdateData[T]): Promise<types.IRepositoryGetFull[T]> {
+  async update(id: string, data: types.IRepositoryUpdateData[T]): Promise<types.IRepositoryGetFull[T]> {
     return new Promise((resolve) => {
-      resolve({} as types.IRepositoryGetFull[T]);
+      const index = this.data.findIndex((e) => e.id === id);
+      this.data[index] = data as types.IRepositoryGetFull[T];
+      resolve(data as types.IRepositoryGetFull[T]);
     });
   }
 
-  async get(_id: unknown): Promise<types.IRepositoryGetData[T]> {
+  async get(id: unknown): Promise<types.IRepositoryGetData[T]> {
     return new Promise((resolve) => {
-      resolve({} as types.IRepositoryGetData[T]);
+      resolve(this.data.find((e) => e.id === id) as types.IRepositoryGetData[T]);
     });
   }
 
   async getAll(_page: number): Promise<types.IRepositoryGetAllData[T]> {
     return new Promise((resolve) => {
-      resolve([] as types.IRepositoryGetAllData[T]);
+      resolve(this.data as types.IRepositoryGetAllData[T]);
     });
   }
 }

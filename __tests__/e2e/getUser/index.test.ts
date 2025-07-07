@@ -4,9 +4,9 @@ import supertest from 'supertest'
 import State from '../../../src/tools/state.js'
 import { Express } from 'express'
 import { IUserEntity } from '../../../src/modules/users/entity.js';
-import knex from 'knex'
-import Tester from '../../utils/index.js'
-import { ETableNames } from '../../../src/enums/db.js';
+import Tester, { createCookie } from '../../utils/index.js'
+import { ETokens } from '../../../src/enums/tokens.js';
+import { generateRandomName, generateRandomNumber } from '../../../src/utils/index.js';
 
 interface IGetUsersResponse {
   data: {
@@ -16,13 +16,14 @@ interface IGetUsersResponse {
 
 describe('Get user', () => {
   let app: Express | null = null
-  let postgres: knex.Knex.QueryBuilder | null = null
   let tester: Tester | null = null
+  let fakeToken: string | null = null
 
-  beforeAll(() => {
+  beforeAll(async () => {
     app = State.router.app
-    postgres = State.postgres.getClient()(ETableNames.Users)
-    tester = new Tester(postgres)
+    tester = new Tester(State.postgres.getClient())
+    await tester.createFakeKey()
+    fakeToken = await tester.createFakeAccessToken()
   })
 
   afterEach(async () => {
@@ -39,6 +40,7 @@ describe('Get user', () => {
 
       const res = (await supertest(app!)
         .post('/graphql')
+        .set('Cookie', createCookie(ETokens.Access, fakeToken!))
         .send(reqBody))
 
       const body = res.body as IGraphError
@@ -53,6 +55,7 @@ describe('Get user', () => {
 
       const res = (await supertest(app!)
         .post('/graphql')
+        .set('Cookie', createCookie(ETokens.Access, fakeToken!))
         .send(reqBody))
 
       const body = res.body as IGetUsersResponse
@@ -61,73 +64,93 @@ describe('Get user', () => {
     });
 
     it(`Get full user by login`, async () => {
-      await tester!.createFakeUser({ login: 'userName', id: 1 })
-      const reqBody = { query: "{ user ( login: \"userName\" ) { id login } }"}
+      const login = generateRandomName(10)
+      const id = generateRandomNumber()
+
+      await tester!.createFakeUser({ login, id })
+      const reqBody = { query: `{ user ( login: "${login}" ) { id login } }`}
 
       const res = (await supertest(app!)
         .post('/graphql')
+        .set('Cookie', createCookie(ETokens.Access, fakeToken!))
         .send(reqBody))
 
       const body = res.body as IGetUsersResponse
 
-      expect(body.data.user!.login).toEqual('userName')
-      expect(body.data.user!.id).toEqual("1")
+      expect(body.data.user!.login).toEqual(login)
+      expect(body.data.user!.id).toEqual(id.toString())
     });
 
     it(`Get user's id by login`, async () => {
-      await tester!.createFakeUser({ login: 'userName', id: 1 })
-      const reqBody = { query: "{ user ( login: \"userName\" ) { id } }"}
+      const login = generateRandomName(10)
+      const id = generateRandomNumber()
+
+      await tester!.createFakeUser({ login, id })
+      const reqBody = { query: `{ user ( login: "${login}" ) { id } }`}
 
       const res = (await supertest(app!)
         .post('/graphql')
+        .set('Cookie', createCookie(ETokens.Access, fakeToken!))
         .send(reqBody))
 
       const body = res.body as IGetUsersResponse
 
       expect(body.data.user!.login).toBeUndefined()
-      expect(body.data.user!.id).toEqual("1")
+      expect(body.data.user!.id).toEqual(id.toString())
     });
 
     it(`Get user's login by login`, async () => {
-      await tester!.createFakeUser({ login: 'userName', id: 1 })
-      const reqBody = { query: "{ user ( login: \"userName\" ) { login } }"}
+      const login = generateRandomName(10)
+      const id = generateRandomNumber()
+
+      await tester!.createFakeUser({ login, id })
+      const reqBody = { query: `{ user ( login: "${login}" ) { login } }`}
 
       const res = (await supertest(app!)
         .post('/graphql')
+        .set('Cookie', createCookie(ETokens.Access, fakeToken!))
         .send(reqBody))
 
       const body = res.body as IGetUsersResponse
 
       expect(body.data.user!.id).toBeUndefined()
-      expect(body.data.user!.login).toEqual("userName")
+      expect(body.data.user!.login).toEqual(login.toString())
     });
 
     it(`Get user's id by id`, async () => {
-      await tester!.createFakeUser({ login: 'userName', id: 1 })
-      const reqBody = { query: "{ user ( id: \"1\" ) { id } }"}
+      const login = generateRandomName(10)
+      const id = generateRandomNumber()
+
+      await tester!.createFakeUser({ login, id })
+      const reqBody = { query: `{ user ( id: "${id}" ) { id } }`}
 
       const res = (await supertest(app!)
         .post('/graphql')
+        .set('Cookie', createCookie(ETokens.Access, fakeToken!))
         .send(reqBody))
 
       const body = res.body as IGetUsersResponse
 
       expect(body.data.user!.login).toBeUndefined()
-      expect(body.data.user!.id).toEqual("1")
+      expect(body.data.user!.id).toEqual(id.toString())
     });
 
     it(`Get user's login by id`, async () => {
-      await tester!.createFakeUser({ login: 'userName', id: 1 })
-      const reqBody = { query: "{ user ( id: \"1\" ) { login } }"}
+      const login = generateRandomName(10)
+      const id = generateRandomNumber()
+
+      await tester!.createFakeUser({ login, id })
+      const reqBody = { query: `{ user ( id: "${id}" ) { login } }`}
 
       const res = (await supertest(app!)
         .post('/graphql')
+        .set('Cookie', createCookie(ETokens.Access, fakeToken!))
         .send(reqBody))
 
       const body = res.body as IGetUsersResponse
 
       expect(body.data.user!.id).toBeUndefined()
-      expect(body.data.user!.login).toEqual("userName")
+      expect(body.data.user!.login).toEqual(login)
     });
   })
 });
