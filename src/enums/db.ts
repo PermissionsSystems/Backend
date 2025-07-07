@@ -3,4 +3,5 @@ export enum ETableNames {
   Users = 'users',
   Keys = 'keys',
   Clients = 'clients',
+  Roles = 'roles',
 }

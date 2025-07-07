@@ -27,10 +27,16 @@ export enum EAuthActions {
   CancelLogin = 'cancelLogin',
 }
 
+export enum ERoleActions {
+  Get = 'getRole',
+  GetAll = 'getAllRoles',
+}
+
 export enum EControllers {
   Users = 'users',
   Keys = 'keys',
   Health = 'health',
   Auth = 'auth',
   Clients = 'clients',
+  Roles = 'roles',
 }

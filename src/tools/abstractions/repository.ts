@@ -2,6 +2,9 @@ import State from '../../tools/state.js';
 import type * as types from '../../types/index.js';
 import type { QueryResult } from 'pg';
 
+/*
+ * THis is most likely broken and will not fully work. I would write "todo", but I know that I won't work on this
+ */
 export abstract class RepositoryPostgresFactory<T extends types.ERepositoryTargets>
   implements types.IAbstractRepository<T>
 {
@@ -56,8 +59,8 @@ export abstract class RepositoryMemoryFactory<T extends types.ERepositoryTargets
 
   async add(data: types.IRepositoryAddData[T]): Promise<types.IRepositoryGetFull[T]> {
     return new Promise((resolve) => {
-      this.data.push(data as types.IRepositoryGetFull[T]);
-      resolve(data as types.IRepositoryGetFull[T]);
+      this.data.push(data as unknown as types.IRepositoryGetFull[T]);
+      resolve(data as unknown as types.IRepositoryGetFull[T]);
     });
   }
 
