@@ -47,7 +47,7 @@ export default class UserFacade {
     switch (repositoryTarget) {
       case 'memory':
         Log.debug('Controller', 'Creating in-memory database');
-        UserFacade.instance = new UserRepository(new MemoryUserRepository());
+        UserFacade.instance = new UserRepository(MemoryUserRepository.createInstance());
         return UserFacade.instance;
       case 'postgres':
         Log.debug('Controller', 'Creating postgres database');

@@ -371,3 +371,35 @@ export class InvalidAuthClient extends FullError {
     this.name = 'InvalidAuthClient';
   }
 }
+
+/**
+ * @openapi
+ * components:
+ *   schemas:
+ *     AlreadyAuthorized:
+ *       type: object
+ *       properties:
+ *         name:
+ *           type: string
+ *           description: Error name describing the error cause.
+ *           example: 'AlreadyAuthorized'
+ *         code:
+ *           type: string
+ *           description: Unique code associated with the error.
+ *           example: '012'
+ *         message:
+ *           type: string
+ *           description: Error message describing the error cause.
+ *           example: 'Already authorized'
+ */
+export class AlreadyAuthorized extends FullError {
+  constructor() {
+    super('Already authorized', {
+      extensions: {
+        code: '012',
+        status: 400,
+      },
+    });
+    this.name = 'AlreadyAuthorized';
+  }
+}

@@ -20,16 +20,18 @@ export default class AppRouter {
     return this._router;
   }
 
-  initRoutes(app: express.Router): void {
+  initRoutes(): void {
+    initHealthRoutes();
+    initAuthRoutes();
+  }
+
+  initSecuredRoutes(app: express.Router): void {
     app.use(
       '/graphql',
       createHandler({
         schema: graphSchemas,
       }),
     );
-
-    initHealthRoutes();
-    initAuthRoutes();
   }
 
   initFourOhFour(app: express.Express): void {

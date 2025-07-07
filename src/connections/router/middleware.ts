@@ -5,8 +5,11 @@ import session from 'express-session';
 import helmet from 'helmet';
 import Log from 'simpl-loggar';
 import { limitRate } from './utils/index.js';
+import handleErr from '../../errors/handler.js';
 import * as errors from '../../errors/index.js';
+import Authorization from '../../modules/auth/utils.js';
 import ConfigLoader from '../../tools/config/index.js';
+import type { ETokens } from '../../enums/tokens.js';
 import type * as types from '../../types/index.js';
 import { randomUUID } from 'crypto';
 
@@ -40,6 +43,29 @@ export default class Middleware {
 
     if (diag.logRequests) this.logRequests(app);
     if (diag.reqTime) this.measureTime(app);
+  }
+
+  /*
+   * Initialize authorization middleware
+   */
+  generateAuthorization(app: express.Express): void {
+    app.use(async (req: express.Request, res: express.Response, next: express.NextFunction) => {
+      const authLogic = Authorization.createInstance();
+      const isAuthorized = await authLogic.isLoggedIn(
+        req.cookies as {
+          [ETokens.Access]: string | undefined;
+          [ETokens.Refresh]: string | undefined;
+        },
+      );
+
+      if (isAuthorized.isLoggedIn) {
+        next();
+        return;
+      }
+
+      Log.error('Middleware', 'User unauthorized');
+      handleErr(new errors.FourOhFour(), res);
+    });
   }
 
   /**

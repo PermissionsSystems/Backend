@@ -39,11 +39,11 @@ export default class KeyFacade {
 
     switch (repositoryTarget) {
       case 'memory':
-        Log.debug('Controller', 'Creating in-memory database');
-        KeyFacade.instance = new KeyRepository(new MemoryKeyRepository());
+        Log.debug('Controller', 'Creating in-memory database for keys');
+        KeyFacade.instance = new KeyRepository(MemoryKeyRepository.createInstance());
         return KeyFacade.instance;
       case 'postgres':
-        Log.debug('Controller', 'Creating postgres database');
+        Log.debug('Controller', 'Creating postgres database for keys');
         KeyFacade.instance = new KeyRepository(new PostgresKeyRepository(ETableNames.Keys));
         return KeyFacade.instance;
       default:

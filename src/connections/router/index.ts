@@ -38,6 +38,8 @@ export default class Router {
     this.initMiddleware();
     this.initRateLimiter();
     this.initRouter();
+    this.initAuthorizationMiddleware();
+    this.initSecuredRoutes();
     this.initServer();
   }
 
@@ -60,11 +62,18 @@ export default class Router {
     this.server.close();
   }
 
-  /**
+  /*
    * Initialize middleware to handle express.
    */
   private initMiddleware(): void {
     this.middleware.generateMiddleware(this.app);
+  }
+
+  /*
+   *  Check if users are authoized
+   */
+  private initAuthorizationMiddleware(): void {
+    this.middleware.generateAuthorization(this.app);
   }
 
   /**
@@ -85,7 +94,14 @@ export default class Router {
    * Init basic routes.
    */
   private initRouter(): void {
-    this.router.initRoutes(this.app);
+    this.router.initRoutes();
+  }
+
+  /**
+   * Init secured routes.
+   */
+  private initSecuredRoutes(): void {
+    this.router.initSecuredRoutes(this.app);
   }
 
   /**

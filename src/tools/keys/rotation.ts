@@ -75,7 +75,7 @@ class RotateKeys {
   }
 
   private configLogger(): void {
-    Log.setPrefix('monsters');
+    Log.setPrefix('permissionsSystem');
   }
 
   private async createKeys(amount: number = 1): Promise<string[]> {

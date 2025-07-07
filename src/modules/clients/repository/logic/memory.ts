@@ -8,6 +8,19 @@ export default class ClientMemoryRepository
   extends RepositoryMemoryFactory<enums.EControllers.Clients>
   implements IClientRepository
 {
+  private constructor() {
+    super();
+  }
+
+  static createInstance(): ClientMemoryRepository {
+    if (ClientMemoryRepository.instance) return ClientMemoryRepository.instance;
+
+    ClientMemoryRepository.instance = new ClientMemoryRepository();
+    return ClientMemoryRepository.instance;
+  }
+
+  private static accessor instance: ClientMemoryRepository | undefined = undefined;
+
   async remove(_data: IRemoveClientDto): Promise<void> {
     return new Promise((resolve) => {
       resolve();

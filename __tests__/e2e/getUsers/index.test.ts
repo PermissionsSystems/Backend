@@ -3,9 +3,8 @@ import supertest from 'supertest'
 import State from '../../../src/tools/state.js'
 import { Express } from 'express'
 import { IUserEntity } from '../../../src/modules/users/entity.js';
-import knex from 'knex'
-import { ETableNames } from '../../../src/enums/db.js';
-import Tester from '../../utils/tester/index.js'
+import Tester, { createCookie } from '../../utils/index.js'
+import { ETokens } from '../../../src/enums/tokens.js';
 
 interface IGetAllUsersResponse {
   data: {
@@ -15,13 +14,14 @@ interface IGetAllUsersResponse {
 
 describe('Get all users', () => {
   let app: Express | null = null
-  let postgres: knex.Knex.QueryBuilder | null = null
   let tester: Tester | null = null
+  let fakeToken: string | null = null
 
-  beforeAll(() => {
+  beforeAll(async () => {
     app = State.router.app
-    postgres = State.postgres.getClient()(ETableNames.Users)
-    tester = new Tester(postgres)
+    tester = new Tester(State.postgres.getClient())
+    await tester.createFakeKey()
+    fakeToken = await tester.createFakeAccessToken()
   })
 
   afterEach(async () => {
@@ -38,6 +38,7 @@ describe('Get all users', () => {
 
       const res = (await supertest(app!)
         .post('/graphql')
+        .set('Cookie', createCookie(ETokens.Access, fakeToken!))
         .send(reqBody))
 
       const body = res.body as IGetAllUsersResponse
@@ -51,6 +52,7 @@ describe('Get all users', () => {
 
       const res = (await supertest(app!)
         .post('/graphql')
+        .set('Cookie', createCookie(ETokens.Access, fakeToken!))
         .send(reqBody))
 
       const body = res.body as IGetAllUsersResponse
