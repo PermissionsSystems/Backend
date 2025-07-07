@@ -1,5 +1,5 @@
-import type Postgres from '../connections/postgres/index.ts';
-import type Router from '../connections/router/index.ts';
+import type Postgres from '../connections/postgres/index.js';
+import type Router from '../connections/router/index.js';
 import type Bootstrap from '../tools/bootstrap.js';
 
 export interface IState {

@@ -2,6 +2,7 @@ import type { IControllerActions } from './controllers.js';
 import type * as enums from '../enums/index.js';
 import type { IClientRepository } from '../modules/clients/repository/types.js';
 import type { IKeyRepository } from '../modules/keys/repository/types.js';
+import type { IRoleRepository } from '../modules/roles/repository/types.js';
 import type { IUserRepository } from '../modules/users/repository/types.js';
 
 type IControllerActionsMap = {
@@ -36,10 +37,16 @@ export interface IAuthControllers extends IControllerActionsMap {
   };
 }
 
+export interface IRoleControllers extends IControllerActionsMap {
+  [enums.ERoleActions.Get]: IRoleRepository;
+  [enums.ERoleActions.GetAll]: IRoleRepository;
+}
+
 export type IHealthControllers = IControllerActionsMap;
 
 export interface IControllersRepository {
   [enums.EControllers.Users]: IUserControllers;
+  [enums.EControllers.Roles]: IRoleControllers;
   [enums.EControllers.Clients]: IClientControllers;
   [enums.EControllers.Auth]: IAuthControllers;
   [enums.EControllers.Health]: IHealthControllers;
